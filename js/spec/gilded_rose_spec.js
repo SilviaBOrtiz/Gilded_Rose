@@ -42,5 +42,12 @@ describe("Gilded Rose", function() {
     expect(items[0].quality).toEqual(50);
   });
 
+  it("should not change Sulfuras", function() {
+    items = [ new Item("Sulfuras, Hand of Ragnaros", 0, 80) ];
+    update_quality();
+    expect(items[0].sell_in).toEqual(0);
+    expect(items[0].quality).toEqual(80);
+  });
+
 
 });
