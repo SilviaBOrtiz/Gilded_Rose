@@ -58,6 +58,14 @@ function update_quality() {
         }
       }
     }
+    if (items[i].name =='Conjured Mana Cake'){
+      if (items[i].sell_in > 0) {
+          items[i].quality = items[i].quality - 1;
+      }else{
+          items[i].quality = items[i].quality-2;
+      }
+    }
+
   }
 }
 
