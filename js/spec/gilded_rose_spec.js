@@ -12,4 +12,10 @@ describe("Gilded Rose", function() {
     expect(items[0].quality).toEqual(5);
   });
 
+  it("should degrade twice as fast after sellin", function() {
+    items = [ new Item("foo", 0, 6) ];
+    update_quality();
+    expect(items[0].quality).toEqual(4);
+  });
+
 });
