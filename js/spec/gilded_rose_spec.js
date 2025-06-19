@@ -61,4 +61,10 @@ describe("Gilded Rose", function() {
     expect(items[0].quality).toEqual(12);
   });
 
+  it("should increase quality of Backstage pass by 3 when there are 5 days or less", function() {
+    items = [ new Item("Backstage passes to a TAFKAL80ETC concert", 1, 12) ];
+    update_quality();
+    expect(items[0].quality).toEqual(15);
+  });
+
 });
