@@ -24,5 +24,11 @@ describe("Gilded Rose", function() {
     expect(items[0].quality).toEqual(0);
   });
 
-  
+  it("should increase quality of Aged Brie", function() {
+    items = [ new Item("Aged Brie", 5, 0) ];
+    update_quality();
+    expect(items[0].quality).toEqual(1);
+  });
+
+
 });
