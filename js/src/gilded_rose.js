@@ -14,58 +14,63 @@ items.push(new Item('Backstage passes to a TAFKAL80ETC concert', 15, 20));
 items.push(new Item('Conjured Mana Cake', 3, 6));
 
 function update_quality() {
-  for (var i = 0; i < items.length; i++) {
-    if (items[i].name != 'Aged Brie' && items[i].name != 'Backstage passes to a TAFKAL80ETC concert') {
-      if (items[i].quality > 0) {
-        if (items[i].name != 'Sulfuras, Hand of Ragnaros') {
-          items[i].quality = items[i].quality - 1
-        }
-      }
-    } else {
-      if (items[i].quality < 50) {
-        items[i].quality = items[i].quality + 1
-        if (items[i].name == 'Backstage passes to a TAFKAL80ETC concert') {
-          if (items[i].sell_in < 11) {
-            if (items[i].quality < 50) {
-              items[i].quality = items[i].quality + 1
-            }
-          }
-          if (items[i].sell_in < 6) {
-            if (items[i].quality < 50) {
-              items[i].quality = items[i].quality + 1
-            }
-          }
-        }
-      }
-    }
-    if (items[i].name != 'Sulfuras, Hand of Ragnaros') {
-      items[i].sell_in = items[i].sell_in - 1;
-    }
-    if (items[i].sell_in < 0) {
-      if (items[i].name != 'Aged Brie') {
-        if (items[i].name != 'Backstage passes to a TAFKAL80ETC concert') {
-          if (items[i].quality > 0) {
-            if (items[i].name != 'Sulfuras, Hand of Ragnaros') {
-              items[i].quality = items[i].quality - 1
-            }
-          }
-        } else {
-          items[i].quality = items[i].quality - items[i].quality
-        }
-      } else {
-        if (items[i].quality < 50) {
-          items[i].quality = items[i].quality + 1
-        }
-      }
-    }
-    if (items[i].name =='Conjured Mana Cake'){
-      if (items[i].sell_in > 0) {
-          items[i].quality = items[i].quality - 1;
-      }else{
-          items[i].quality = items[i].quality-2;
-      }
-    }
-
+  for (let item of items) {
+    update_item(item);
   }
+}
+
+function update_item(item) {
+  // "Sulfuras", being a legendary item, never has to be sold or decreases in Quality
+  if (item.name == 'Sulfuras, Hand of Ragnaros') {
+    return;
+  }
+
+  // At the end of each day our system lowers both values for every item
+  item.sell_in = item.sell_in - 1;
+  item.quality += get_degrade(item);
+
+  // The Quality of an item is never more than 50
+  if (item.quality > 50) {
+    item.quality = 50;
+  }
+
+  // The Quality of an item is never negative
+  if (item.quality < 0) {
+    item.quality = 0;
+  }
+}
+
+function get_degrade(item) {
+  if (item.name == 'Backstage passes to a TAFKAL80ETC concert') {
+    if (item.sell_in >= 10) {
+      return 1; // "Backstage passes", like aged brie, increases in Quality as it's SellIn value approaches
+    } else if (item.sell_in >= 5) {
+      return 2; // Quality increases by 2 when there are 10 days or less
+    } else if (item.sell_in >= 0){
+      return 3; // and by 3 when there are 5 days or less
+    } else { // but Quality drops to 0 after the concert
+      return -item.quality;
+    }
+  }
+
+  // At the end of each day our system lowers both values for every item
+  var degrade = -1;
+
+  // "Aged Brie" actually increases in Quality the older it gets
+  if (item.name == 'Aged Brie') {
+    degrade *= -1;
+  }
+
+  // "Conjured" items degrade in Quality twice as fast as normal items
+  if (item.name == 'Conjured Mana Cake') {
+    degrade *= 2;
+  }
+
+  // Once the sell by date has passed, Quality degrades twice as fast
+  if (item.sell_in < 0) {
+    degrade *= 2;
+  }
+
+  return degrade;
 }
 
